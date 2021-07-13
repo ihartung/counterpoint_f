@@ -1,11 +1,11 @@
 import logo from './logo.svg';
 import './App.css';
-import CPPiano from './piano.js';
+import Landing from './landing.js';
 
 function App() {
   return (
     <div>
-	<CPPiano/>
+	<Landing/>
     </div>
   );
 }
