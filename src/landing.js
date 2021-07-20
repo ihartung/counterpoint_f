@@ -1,6 +1,6 @@
 import CPPiano from './piano.js';
 import Sheet from './sheet.js';
-import {Grid, makeStyles} from '@material-ui/core';
+import {Grid, makeStyles, Button} from '@material-ui/core';
 import {useState} from 'react';
 
 const useStyles = makeStyles({
@@ -20,6 +20,10 @@ function Landing() {
 		setMelody(melody => [...melody, midiNumber]);
 	}
 
+	const resetMelody = () => {
+		setMelody([]);
+	}
+
 
 	return (
 		<div>
@@ -32,6 +36,11 @@ function Landing() {
 		<Grid className={classes.trunk} xs={12} item>
 		<Grid item>
 		<Sheet melody={melody}/>
+		</Grid>
+		</Grid>
+		<Grid className={classes.trunk} xs={12} item>
+		<Grid item>
+		<Button variant='outlined' color='primary' onClick={resetMelody}>Clear</Button>
 		</Grid>
 		</Grid>
 		</Grid>

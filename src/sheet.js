@@ -4,29 +4,55 @@ import {midiVex, staveNotes} from './helper.js';
 
 export default function Sheet (props) {
 
-	useEffect(() => {
+	const clear = () => {
+		var myDiv = document.getElementById("boo")
+		while(myDiv.lastElementChild){
+			myDiv.removeChild(myDiv.lastElementChild);
+		}
+	}
+
+	const createContext = (divID) => {
 		const VF = Vex.Flow;
 
 		// Create an SVG renderer and attach it to the DIV element named "boo".
-		var div = document.getElementById("boo")
+		var div = document.getElementById(divID)
 		var renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
 
 		// Size our SVG:
 		renderer.resize(500, 500);
 
 		// And get a drawing context:
-		var context = renderer.getContext();
+		return renderer.getContext();
 
-		// Create a stave at position 10, 40 of width 400 on the canvas.
+
+	}
+
+	const drawStave = (context) => {
+		const VF = Vex.Flow;
 		var stave = new VF.Stave(10, 40, 400);
-
 		// Add a clef and time signature.
-		stave.addClef("treble").addTimeSignature("4/4");
-
+		stave.addClef("treble");
 		// Connect it to the rendering context and draw!
 		stave.setContext(context).draw();
+		return stave;
+
+	}
+
+	useEffect(() => {
+
+		drawStave(createContext('boo'));
+
+	}, []);
+
+	useEffect(() => {
+		const VF = Vex.Flow;
+		clear();	
+		var context = createContext('boo');
+		var stave = drawStave(context);
 
 		if(props.melody.length){
+
+
 			var rawNotes = staveNotes(midiVex(props.melody));
 			var notes = [];
 			for(let i = 0; i < rawNotes.length; i++){

@@ -1,6 +1,6 @@
 import {Piano, KeyboardShortcuts, MidiNumbers} from 'react-piano';
 import 'react-piano/dist/styles.css'
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 import SoundFont from 'soundfont-player';
 
 export default function CPPiano (props) {
@@ -12,9 +12,9 @@ export default function CPPiano (props) {
 		keyboardConfig: KeyboardShortcuts.HOME_ROW,
 	});
 
-	const [recording, setRecording] = useState(false);
 	const [activeNodes, setActiveNodes] = useState({});
 	const [instrument, setInstrument] = useState(null);
+	const recording = useRef(false);
 
 	useEffect(()=> {
 		const wrap = async () => {
@@ -27,7 +27,7 @@ export default function CPPiano (props) {
 
 	const startNote = async (midiNumber) => {
 		await props.audioctx.resume();
-		const audioNode = instrument.play(midiNumber);
+		const audioNode = await instrument.play(midiNumber);
 		setActiveNodes(activeNodes => ({...activeNodes, [midiNumber]: audioNode}));
 
 	}
@@ -41,16 +41,16 @@ export default function CPPiano (props) {
 
 	}
 
-	const startNoteInput = (midiNumbers) => {
-		if(!recording){
-			setRecording(true);
+	const startNoteInput = (midiNumbers, {prevActiveNotes}) => {
+		if(!recording.current){
+			recording.current = true;
 		}
 	}
 
 	const stopNoteInput = (midiNumber, {prevActiveNotes}) => {
-		if(recording){
+		if(recording.current){
 			props.record(midiNumber);
-			setRecording(false);
+			recording.current = false;
 		}
 
 	}
