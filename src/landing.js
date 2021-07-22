@@ -23,7 +23,28 @@ function Landing() {
 	const resetMelody = () => {
 		setMelody([]);
 	}
+/*
+	const submitMelody = e => {
+		e.preventDefault();
 
+		var data = new FormData();
+
+		data.append('cantusfirmus', melody)
+		data.append('key', key)
+
+		var headers = {'X-CSRFToken':localStorage.getItem('csrftoken')}
+
+		axios.post(routes.root + '/counterpoint', data, {headers})
+			.then()
+			.catch(e => {
+				console.log(e);
+			});
+
+	}
+
+
+	}
+*/
 
 	return (
 		<div>
