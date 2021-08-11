@@ -2,6 +2,9 @@ import CPPiano from './piano.js';
 import Sheet from './sheet.js';
 import {Grid, makeStyles, Button} from '@material-ui/core';
 import {useState} from 'react';
+import axios from 'axios';
+import routes from './routes';
+import MelodyForm from './melodyForm.js';
 
 const useStyles = makeStyles({
 	trunk: {
@@ -15,6 +18,7 @@ function Landing() {
 	const classes = useStyles();
 	const audioctx = new window.AudioContext();
 	const [melody, setMelody] = useState([]);
+	const [counterpoints, setCounterpoints] = useState([]);
 
 	const recordNotes = (midiNumber) => {
 		setMelody(melody => [...melody, midiNumber]);
@@ -23,14 +27,14 @@ function Landing() {
 	const resetMelody = () => {
 		setMelody([]);
 	}
-/*
+
 	const submitMelody = e => {
 		e.preventDefault();
 
 		var data = new FormData();
 
-		data.append('cantusfirmus', melody)
-		data.append('key', key)
+		data.append('melody', melody)
+		//data.append('key', key)
 
 		var headers = {'X-CSRFToken':localStorage.getItem('csrftoken')}
 
@@ -39,12 +43,12 @@ function Landing() {
 			.catch(e => {
 				console.log(e);
 			});
-
 	}
 
-
+	const addCounterpoint = cp => {
+	    setCounterpoints(counterpoints => [...counterpoints, cp]);
 	}
-*/
+
 
 	return (
 		<div>
@@ -56,7 +60,12 @@ function Landing() {
 		</Grid>
 		<Grid className={classes.trunk} xs={12} item>
 		<Grid item>
-		<Sheet melody={melody}/>
+		<Sheet melody={melody} counterpoints={counterpoints}/>
+		</Grid>
+		</Grid>
+		<Grid className={classes.trunk} xs={12} item>
+		<Grid item>
+		<MelodyForm addCounterpoint={addCounterpoint}/>
 		</Grid>
 		</Grid>
 		<Grid className={classes.trunk} xs={12} item>
@@ -64,6 +73,7 @@ function Landing() {
 		<Button variant='outlined' color='primary' onClick={resetMelody}>Clear</Button>
 		</Grid>
 		</Grid>
+
 		</Grid>
 		</div>
 	);
