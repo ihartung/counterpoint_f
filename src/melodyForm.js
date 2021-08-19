@@ -15,37 +15,49 @@ export default function MelodyForm(props){
 
 	const keys = ['A', 'B', 'C', 'D', 'E', 'F', 'G','Ab', 'Bb', 'Cb', 'Db', 'Eb', 'Fb', 'Gb','A#', 'B#', 'C#', 'D#', 'E#', 'F#', 'G#'];
 
-	const [key, setKey] = useState('A');
+	const [key, setKey] = useState('C');
 	const [scale, setScale] = useState('major');
 	const [vertical, setVertical] = useState(true);
 
 	const handleKeyChange = e => {
-	    setKey(e.target.value)
+		var kk = e.target.value;
+		setKey(kk)
+		if(scale == 'minor'){
+			props.changeKey(kk + 'm');
+			return;
+		}
+		props.changeKey(kk);
 	}
 
 	const handleScaleChange = e => {
-	    setScale(e.target.value)
+		var mm = e.target.value;
+		setScale(mm);
+		if(mm == 'minor'){
+			props.changeKey(key + 'm');
+			return;
+		}
+		props.changeKey(key);
 	}
 
 	const handleVerticalChange = e => {
-	    setVertical(e.target.checked)
+		setVertical(e.target.checked)
 	}
 
 
 	const submitMelody = e => {
 		e.preventDefault();
-		
+
 		var data = new FormData();
 
 		data.append('key', key + ' ' + scale)
 		data.append('vertical', vertical? 1:-1)
-		data.append('melody', melody)
+		data.append('melody', props.melody)
 
 		var headers = {'X-CSRFToken':localStorage.getItem('csrftoken')}
 
 		axios.post(routes.root + '/counterpoint', data, {headers})
 			.then(result => {
-			    addCounterpoint(result.data.counterpoint)
+				addCounterpoint(result.data.counterpoint)
 			})
 			.catch(e => {
 				console.log(e);
@@ -58,14 +70,14 @@ export default function MelodyForm(props){
 		<div m={3}>
 		<Grid container spacing={1}>
 		<Grid item xs={3}>
-		<Select onChange={handleKeyChange} value={key}>
-	    	{keys.map(key => (
-		    <MenuItem value={key}>{key}</MenuItem>
+		<Select id='kk' onChange={handleKeyChange} value={key}>
+		{keys.map(key => (
+			<MenuItem value={key}>{key}</MenuItem>
 		))}
 		</Select>
 		</Grid>
 		<Grid item xs={3}>
-		<Select onChange={handleScaleChange} value={scale}>
+		<Select id='mm' onChange={handleScaleChange} value={scale}>
 		<MenuItem value='major'>major</MenuItem>
 		<MenuItem value='minor'>minor</MenuItem>
 		</Select>

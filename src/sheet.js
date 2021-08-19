@@ -4,11 +4,17 @@ import {midiVex, staveNotes} from './helper.js';
 
 export default function Sheet (props) {
 
-	const clear = () => {
-		var myDiv = document.getElementById("boo")
+	const clearCF = () => {
+		var myDiv = document.getElementById("melody_div");
 		while(myDiv.lastElementChild){
 			myDiv.removeChild(myDiv.lastElementChild);
 		}
+	}
+
+	const clearCP = () => {
+		let matches = document.querySelectorAll('[id ^= "cp-"]')
+		matches.forEach(element => {element.remove()});
+
 	}
 
 	const createContext = (divID) => {
@@ -27,91 +33,106 @@ export default function Sheet (props) {
 
 	}
 
+
 	const drawStave = (context) => {
 		const VF = Vex.Flow;
 		var stave = new VF.Stave(10, 40, 700);
 		// Add a clef and time signature.
-		stave.addClef("treble");
+		stave.addClef("treble").addKeySignature(props.keySignature);
 		// Connect it to the rendering context and draw!
 		stave.setContext(context).draw();
 		return stave;
 
 	}
 
-	const addVoices = (countermelodies) => {
-	    result = [];
-	    for(var i = 0; i < countermelodies.length; i++){
-		result.push(
-		    <div id={'cp'+ i}></div>
-		)
-	    }
+	const drawVoice = (cantus, divId) => {
 
-	    return result;
+		const VF = Vex.Flow;
+
+		var context = createContext(divId);
+		var stave = drawStave(context);
+		var rawNotes = staveNotes(midiVex(cantus));
+		var notes = [];
+		for(let i = 0; i < rawNotes.length; i++){
+			let tmp;
+			if(rawNotes[i].keys[0].includes('#')){
+				tmp = new VF.StaveNote(rawNotes[i]).addAccidental(0, new VF.Accidental('#'));
+			} else {
+				tmp = new VF.StaveNote(rawNotes[i]);
+
+			}
+			notes.push(tmp);
+		}
+
+		var voice = new VF.Voice({num_beats:notes.length, beat_value:4});
+		voice.addTickables(notes);
+
+		var formatter = new VF.Formatter().joinVoices([voice]).format([voice], 400);
+
+		voice.draw(context,stave);
+
+	}
+
+	const addVoices = (countermelodies) => {
+
+		var myDiv = document.getElementById("sheet_div");
+		for(var i = 0; i < countermelodies.length; i++){
+			let new_div = document.createElement('div');
+			new_div.setAttribute('id', 'cp-' + i)
+			myDiv.append(new_div)
+			drawVoice(countermelodies[i], new_div.id)
+		}
+	}
+
+	const drawCF = () => {
+		if(props.melody.length){
+			clearCF();	
+			drawVoice(props.melody, 'melody_div')
+		}
+	}
+
+	const drawCP = () => {
+		if(props.counterpoints.length){
+			clearCP();
+			addVoices(props.counterpoints);	
+		}
 	}
 
 	useEffect(() => {
 
-		drawStave(createContext('boo'));
+		drawStave(createContext('melody_div'));
 
 	}, []);
 
 	useEffect(() => {
-		const VF = Vex.Flow;
-		clear();	
-		var context = createContext('boo');
-		var stave = drawStave(context);
-
-		if(props.melody.length){
-
-
-			var rawNotes = staveNotes(midiVex(props.melody));
-			var notes = [];
-			for(let i = 0; i < rawNotes.length; i++){
-				notes.push(new VF.StaveNote(rawNotes[i]));
-			}
-
-			var voice = new VF.Voice({num_beats:notes.length, beat_value:4});
-			voice.addTickables(notes);
-
-			var formatter = new VF.Formatter().joinVoices([voice]).format([voice], 400);
-
-			voice.draw(context,stave);
-		}
-
+		drawCF();	
 	}, [props.melody]);
 
 
 	useEffect(() => {
-		const VF = Vex.Flow;
-		clear();
-		var context = createContext('boo');
-		var stave = drawStave(context);
+		drawCP();
+	}, [props.counterpoints]);
 
+	useEffect(() => {
+		clearCF();	
 		if(props.melody.length){
+			drawCF();
+		} else {
+			drawStave(createContext('melody_div'));
 
-
-			var rawNotes = staveNotes(midiVex(props.melody));
-			var notes = [];
-			for(let i = 0; i < rawNotes.length; i++){
-				notes.push(new VF.StaveNote(rawNotes[i]));
-			}
-
-			var voice = new VF.Voice({num_beats:notes.length, beat_value:4});
-			voice.addTickables(notes);
-
-			var formatter = new VF.Formatter().joinVoices([voice]).format([voice], 400);
-
-			voice.draw(context,stave);
 		}
 
-	}, [props.countermelodies]);
+		if(props.counterpoints.length){
+			drawCP();
+		}
+	}, [props.keySignature]);
+
 
 
 	return (
-	    <div>
-		<div id='boo'></div>
-		{addVoices}
-	    </div>
+		<div id='sheet_div'>
+		<div id='melody_div'></div>
+		</div>
 	);
 }
 

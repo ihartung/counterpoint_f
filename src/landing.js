@@ -18,31 +18,19 @@ function Landing() {
 	const classes = useStyles();
 	const audioctx = new window.AudioContext();
 	const [melody, setMelody] = useState([]);
+	const [keySig, setKeySig] = useState('C');
 	const [counterpoints, setCounterpoints] = useState([]);
 
 	const recordNotes = (midiNumber) => {
 		setMelody(melody => [...melody, midiNumber]);
 	}
 
-	const resetMelody = () => {
-		setMelody([]);
+	const changeKey = (key) => {
+		setKeySig(key);
 	}
 
-	const submitMelody = e => {
-		e.preventDefault();
-
-		var data = new FormData();
-
-		data.append('melody', melody)
-		//data.append('key', key)
-
-		var headers = {'X-CSRFToken':localStorage.getItem('csrftoken')}
-
-		axios.post(routes.root + '/counterpoint', data, {headers})
-			.then()
-			.catch(e => {
-				console.log(e);
-			});
+	const resetMelody = () => {
+		setMelody([]);
 	}
 
 	const addCounterpoint = cp => {
@@ -60,12 +48,12 @@ function Landing() {
 		</Grid>
 		<Grid className={classes.trunk} xs={12} item>
 		<Grid item>
-		<Sheet melody={melody} counterpoints={counterpoints}/>
+		<Sheet keySignature={keySig} melody={melody} counterpoints={counterpoints}/>
 		</Grid>
 		</Grid>
 		<Grid className={classes.trunk} xs={12} item>
 		<Grid item>
-		<MelodyForm addCounterpoint={addCounterpoint}/>
+		<MelodyForm changeKey={changeKey} melody={melody} addCounterpoint={addCounterpoint}/>
 		</Grid>
 		</Grid>
 		<Grid className={classes.trunk} xs={12} item>
@@ -73,7 +61,6 @@ function Landing() {
 		<Button variant='outlined' color='primary' onClick={resetMelody}>Clear</Button>
 		</Grid>
 		</Grid>
-
 		</Grid>
 		</div>
 	);

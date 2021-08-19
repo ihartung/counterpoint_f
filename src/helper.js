@@ -25,4 +25,3 @@ export const staveNotes = (engNotes) => {
 
 	return vexNotes;
 }
-
