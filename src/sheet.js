@@ -51,12 +51,14 @@ export default function Sheet (props) {
 
 		var context = createContext(divId);
 		var stave = drawStave(context);
-		var rawNotes = staveNotes(midiVex(cantus));
+		var rawNotes = staveNotes(midiVex(cantus, props.keySignature));
 		var notes = [];
 		for(let i = 0; i < rawNotes.length; i++){
 			let tmp;
 			if(rawNotes[i].keys[0].includes('#')){
 				tmp = new VF.StaveNote(rawNotes[i]).addAccidental(0, new VF.Accidental('#'));
+			} else if(rawNotes[i].keys[0].includes('b')){
+				tmp = new VF.StaveNote(rawNotes[i]).addAccidental(0, new VF.Accidental('b'));
 			} else {
 				tmp = new VF.StaveNote(rawNotes[i]);
 
@@ -85,9 +87,12 @@ export default function Sheet (props) {
 	}
 
 	const drawCF = () => {
+		clearCF();	
 		if(props.melody.length){
-			clearCF();	
 			drawVoice(props.melody, 'melody_div')
+		} else {
+			drawStave(createContext('melody_div'));
+
 		}
 	}
 

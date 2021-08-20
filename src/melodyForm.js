@@ -13,7 +13,8 @@ export default function MelodyForm(props){
 		file:null,
 	};
 
-	const keys = ['A', 'B', 'C', 'D', 'E', 'F', 'G','Ab', 'Bb', 'Cb', 'Db', 'Eb', 'Fb', 'Gb','A#', 'B#', 'C#', 'D#', 'E#', 'F#', 'G#'];
+	const majorKeys = ['C', 'F', 'Bb', 'Eb', 'Ab', 'Db', 'G', 'D', 'A', 'E', 'B'];
+	const minorKeys = ['A', 'D', 'G', 'C', 'F', 'Bb', 'E', 'B', 'F#', 'C#', 'G#'];
 
 	const [key, setKey] = useState('C');
 	const [scale, setScale] = useState('major');
@@ -33,10 +34,12 @@ export default function MelodyForm(props){
 		var mm = e.target.value;
 		setScale(mm);
 		if(mm == 'minor'){
-			props.changeKey(key + 'm');
+			props.changeKey('Am');
+			setKey('A')
 			return;
 		}
-		props.changeKey(key);
+		setKey('C')
+		props.changeKey('C');
 	}
 
 	const handleVerticalChange = e => {
@@ -71,9 +74,13 @@ export default function MelodyForm(props){
 		<Grid container spacing={1}>
 		<Grid item xs={3}>
 		<Select id='kk' onChange={handleKeyChange} value={key}>
-		{keys.map(key => (
-			<MenuItem value={key}>{key}</MenuItem>
-		))}
+		{scale == 'major' ?
+			majorKeys.map(key => (
+				<MenuItem value={key}>{key}</MenuItem>)) :
+			minorKeys.map(key => (
+			<MenuItem value={key}>{key}</MenuItem>))
+
+		}
 		</Select>
 		</Grid>
 		<Grid item xs={3}>

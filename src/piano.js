@@ -23,7 +23,7 @@ export default function CPPiano (props) {
 
 		wrap();
 
-		}, [props.audioctx]);
+		}, []);
 
 	const startNote = async (midiNumber) => {
 		await props.audioctx.resume();
