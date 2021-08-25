@@ -16,7 +16,7 @@ const useStyles = makeStyles({
 
 function Landing() {
 	const classes = useStyles();
-	const audioctx = new window.AudioContext();
+	const [audioctx, setAudioctx] = useState(new window.AudioContext());
 	const [melody, setMelody] = useState([]);
 	const [keySig, setKeySig] = useState('C');
 	const [counterpoints, setCounterpoints] = useState([]);
@@ -31,10 +31,20 @@ function Landing() {
 
 	const resetMelody = () => {
 		setMelody([]);
+		setCounterpoints([]);
 	}
 
 	const addCounterpoint = cp => {
 	    setCounterpoints(counterpoints => [...counterpoints, cp]);
+	}
+
+	const backspace = () => {
+		let tmp = melody.slice(0,-1);
+		setMelody(tmp);
+	}
+
+	const play = () => {
+		return;
 	}
 
 
@@ -58,6 +68,8 @@ function Landing() {
 		</Grid>
 		<Grid className={classes.trunk} xs={12} item>
 		<Grid item>
+		<Button variant='outlined' color='primary' onClick={play}>Play</Button>
+		<Button variant='outlined' color='primary' onClick={backspace}>Backspace</Button>
 		<Button variant='outlined' color='primary' onClick={resetMelody}>Clear</Button>
 		</Grid>
 		</Grid>

@@ -25,7 +25,7 @@ export default function Sheet (props) {
 		var renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
 
 		// Size our SVG:
-		renderer.resize(800, 200);
+		renderer.resize(900, 200);
 
 		// And get a drawing context:
 		return renderer.getContext();
@@ -34,10 +34,16 @@ export default function Sheet (props) {
 	}
 
 
-	const drawStave = (context) => {
+	const drawStave = (context, cf=0) => {
 		const VF = Vex.Flow;
-		var stave = new VF.Stave(10, 40, 700);
+		const modifier = VF.Modifier;
+		var text = 'C.F.';
+		var stave = new VF.Stave(100, 40, 700);
 		// Add a clef and time signature.
+		if(cf == 1){
+			text = 'C.P.';
+		}
+		stave.setText(text, modifier.Position.LEFT);
 		stave.addClef("treble").addKeySignature(props.keySignature);
 		// Connect it to the rendering context and draw!
 		stave.setContext(context).draw();
@@ -50,7 +56,11 @@ export default function Sheet (props) {
 		const VF = Vex.Flow;
 
 		var context = createContext(divId);
-		var stave = drawStave(context);
+		var cf = 0;
+		if(divId != 'melody_div'){
+			cf = 1;
+		}
+		var stave = drawStave(context, cf);
 		var rawNotes = staveNotes(midiVex(cantus, props.keySignature));
 		var notes = [];
 		for(let i = 0; i < rawNotes.length; i++){
@@ -81,13 +91,13 @@ export default function Sheet (props) {
 		for(var i = 0; i < countermelodies.length; i++){
 			let new_div = document.createElement('div');
 			new_div.setAttribute('id', 'cp-' + i)
-			myDiv.append(new_div)
+			myDiv.prepend(new_div)
 			drawVoice(countermelodies[i], new_div.id)
 		}
 	}
 
 	const drawCF = () => {
-		clearCF();	
+		clearCF();
 		if(props.melody.length){
 			drawVoice(props.melody, 'melody_div')
 		} else {
@@ -97,9 +107,9 @@ export default function Sheet (props) {
 	}
 
 	const drawCP = () => {
+		clearCP();
 		if(props.counterpoints.length){
-			clearCP();
-			addVoices(props.counterpoints);	
+			addVoices(props.counterpoints);
 		}
 	}
 
@@ -110,7 +120,7 @@ export default function Sheet (props) {
 	}, []);
 
 	useEffect(() => {
-		drawCF();	
+		drawCF();
 	}, [props.melody]);
 
 
@@ -119,12 +129,11 @@ export default function Sheet (props) {
 	}, [props.counterpoints]);
 
 	useEffect(() => {
-		clearCF();	
+		clearCF();
 		if(props.melody.length){
 			drawCF();
 		} else {
 			drawStave(createContext('melody_div'));
-
 		}
 
 		if(props.counterpoints.length){
