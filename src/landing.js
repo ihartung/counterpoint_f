@@ -1,10 +1,11 @@
 import CPPiano from './piano.js';
 import Sheet from './sheet.js';
 import {Grid, makeStyles, Button} from '@material-ui/core';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import axios from 'axios';
 import routes from './routes';
 import MelodyForm from './melodyForm.js';
+import Player from './player.js';
 
 const useStyles = makeStyles({
 	trunk: {
@@ -46,7 +47,17 @@ function Landing() {
 	const play = () => {
 		return;
 	}
-
+	useEffect(() => {
+		if(!localStorage.getItem('csrftoken')){
+		axios({
+			method: 'get',
+			url: routes.root + '/csrf',
+		}).then(result => {
+			localStorage.removeItem('csrftoken');
+			localStorage.setItem('csrftoken', result.data.csrfToken);
+		});
+		}
+	}, []);
 
 	return (
 		<div>
@@ -68,9 +79,13 @@ function Landing() {
 		</Grid>
 		<Grid className={classes.trunk} xs={12} item>
 		<Grid item>
-		<Button variant='outlined' color='primary' onClick={play}>Play</Button>
 		<Button variant='outlined' color='primary' onClick={backspace}>Backspace</Button>
 		<Button variant='outlined' color='primary' onClick={resetMelody}>Clear</Button>
+		</Grid>
+		</Grid>
+		<Grid className={classes.trunk} xs={12} item>
+		<Grid item>
+		<Player melody={melody} counterpoints={counterpoints}/>
 		</Grid>
 		</Grid>
 		</Grid>

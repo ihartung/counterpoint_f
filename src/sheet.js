@@ -114,9 +114,7 @@ export default function Sheet (props) {
 	}
 
 	useEffect(() => {
-
 		drawStave(createContext('melody_div'));
-
 	}, []);
 
 	useEffect(() => {
