@@ -1,5 +1,6 @@
 import CPPiano from './piano.js';
 import Sheet from './sheet.js';
+import RadioButtons from './radio.js'
 import {Grid, makeStyles, Button} from '@material-ui/core';
 import {useEffect, useState} from 'react';
 import axios from 'axios';
@@ -21,9 +22,18 @@ function Landing() {
 	const [melody, setMelody] = useState([]);
 	const [keySig, setKeySig] = useState('C');
 	const [counterpoints, setCounterpoints] = useState([]);
+	const [voice, setVoice] = useState(0);
 
 	const recordNotes = (midiNumber) => {
-		setMelody(melody => [...melody, midiNumber]);
+		if(voice){
+			let i = voice - 1;
+			let cps = counterpoints;
+			cps[i] = [...counterpoints[i], midiNumber]
+			setCounterpoints(cps);
+
+		} else {
+			setMelody(melody => [...melody, midiNumber]);
+		}
 	}
 
 	const changeKey = (key) => {
@@ -33,6 +43,7 @@ function Landing() {
 	const resetMelody = () => {
 		setMelody([]);
 		setCounterpoints([]);
+		setVoice(0);
 	}
 
 	const addCounterpoint = cp => {
@@ -40,13 +51,21 @@ function Landing() {
 	}
 
 	const backspace = () => {
-		let tmp = melody.slice(0,-1);
-		setMelody(tmp);
+		if(voice){
+			let i = voice - 1;
+			let cps = counterpoints;
+			cps[i] = cps[i].slice(0,-1);
+			setCounterpoints(cps);
+		} else {
+			let tmp = melody.slice(0,-1);
+			setMelody(tmp);
+		}
 	}
 
-	const play = () => {
-		return;
+	const selectVoice = (index) => {
+		setVoice(index);
 	}
+
 	useEffect(() => {
 		if(!localStorage.getItem('csrftoken')){
 		axios({
@@ -65,6 +84,11 @@ function Landing() {
 		<Grid className={classes.trunk} xs={12} item>
 		<Grid item>
 		<CPPiano audioctx={audioctx} record={recordNotes}/>
+		</Grid>
+		</Grid>
+		<Grid className={classes.trunk} xs={12} item>
+		<Grid item>
+		<RadioButtons voice={voice} selectVoice={selectVoice} counterpoints={counterpoints}/>
 		</Grid>
 		</Grid>
 		<Grid className={classes.trunk} xs={12} item>

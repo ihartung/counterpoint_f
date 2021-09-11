@@ -41,7 +41,7 @@ export default function Sheet (props) {
 		var stave = new VF.Stave(100, 40, 700);
 		// Add a clef and time signature.
 		if(cf == 1){
-			text = 'C.P.';
+			text = 'C.P. ' + cf;
 		}
 		stave.setText(text, modifier.Position.LEFT);
 		stave.addClef("treble").addKeySignature(props.keySignature);
@@ -113,6 +113,15 @@ export default function Sheet (props) {
 		}
 	}
 
+	const lengths = (cps) => {
+		let result = [];
+		//let cps = props.counterpoints;
+		for(let i = 0; i < cps.length; i++){
+			result.push(cps[i].length);
+		}
+		return result;
+	}
+
 	useEffect(() => {
 		drawStave(createContext('melody_div'));
 	}, []);
@@ -124,7 +133,7 @@ export default function Sheet (props) {
 
 	useEffect(() => {
 		drawCP();
-	}, [props.counterpoints]);
+	}, [lengths(props.counterpoints)]);
 
 	useEffect(() => {
 		clearCF();
