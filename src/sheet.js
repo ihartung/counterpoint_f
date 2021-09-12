@@ -86,7 +86,6 @@ export default function Sheet (props) {
 	}
 
 	const addVoices = (countermelodies) => {
-
 		var myDiv = document.getElementById("sheet_div");
 		for(var i = 0; i < countermelodies.length; i++){
 			let new_div = document.createElement('div');
@@ -113,15 +112,6 @@ export default function Sheet (props) {
 		}
 	}
 
-	const lengths = (cps) => {
-		let result = [];
-		//let cps = props.counterpoints;
-		for(let i = 0; i < cps.length; i++){
-			result.push(cps[i].length);
-		}
-		return result;
-	}
-
 	useEffect(() => {
 		drawStave(createContext('melody_div'));
 	}, []);
@@ -133,7 +123,7 @@ export default function Sheet (props) {
 
 	useEffect(() => {
 		drawCP();
-	}, [lengths(props.counterpoints)]);
+	}, [props.cpcount]);
 
 	useEffect(() => {
 		clearCF();

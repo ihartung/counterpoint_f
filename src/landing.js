@@ -22,6 +22,7 @@ function Landing() {
 	const [melody, setMelody] = useState([]);
 	const [keySig, setKeySig] = useState('C');
 	const [counterpoints, setCounterpoints] = useState([]);
+	const [cpcount, setCpcount] = useState(0);
 	const [voice, setVoice] = useState(0);
 
 	const recordNotes = (midiNumber) => {
@@ -30,7 +31,8 @@ function Landing() {
 			let cps = counterpoints;
 			cps[i] = [...counterpoints[i], midiNumber]
 			setCounterpoints(cps);
-
+			let tmp = cpcount + 1;
+			setCpcount(tmp);
 		} else {
 			setMelody(melody => [...melody, midiNumber]);
 		}
@@ -44,10 +46,13 @@ function Landing() {
 		setMelody([]);
 		setCounterpoints([]);
 		setVoice(0);
+		setCpcount(0);
 	}
 
 	const addCounterpoint = cp => {
-	    setCounterpoints(counterpoints => [...counterpoints, cp]);
+		setCounterpoints(counterpoints => [...counterpoints, cp]);
+		let tmp = cpcount + cp.length;
+		setCpcount(tmp);
 	}
 
 	const backspace = () => {
@@ -56,6 +61,8 @@ function Landing() {
 			let cps = counterpoints;
 			cps[i] = cps[i].slice(0,-1);
 			setCounterpoints(cps);
+			let tmp = cpcount - 1;
+			setCpcount(tmp);
 		} else {
 			let tmp = melody.slice(0,-1);
 			setMelody(tmp);
@@ -68,13 +75,13 @@ function Landing() {
 
 	useEffect(() => {
 		if(!localStorage.getItem('csrftoken')){
-		axios({
-			method: 'get',
-			url: routes.root + '/csrf',
-		}).then(result => {
-			localStorage.removeItem('csrftoken');
-			localStorage.setItem('csrftoken', result.data.csrfToken);
-		});
+			axios({
+				method: 'get',
+				url: routes.root + '/csrf',
+			}).then(result => {
+				localStorage.removeItem('csrftoken');
+				localStorage.setItem('csrftoken', result.data.csrfToken);
+			});
 		}
 	}, []);
 
@@ -93,7 +100,7 @@ function Landing() {
 		</Grid>
 		<Grid className={classes.trunk} xs={12} item>
 		<Grid item>
-		<Sheet keySignature={keySig} melody={melody} counterpoints={counterpoints}/>
+		<Sheet keySignature={keySig} cpcount={cpcount} melody={melody} counterpoints={counterpoints}/>
 		</Grid>
 		</Grid>
 		<Grid className={classes.trunk} xs={12} item>
