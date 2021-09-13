@@ -55,6 +55,12 @@ function Landing() {
 		setCpcount(tmp);
 	}
 
+	const addBlank = () => {
+		setCounterpoints(counterpoints => [...counterpoints, []]);
+		let tmp = cpcount + 1;
+		setCpcount(tmp);
+	}
+
 	const backspace = () => {
 		if(voice){
 			let i = voice - 1;
@@ -90,6 +96,11 @@ function Landing() {
 		<Grid container>
 		<Grid className={classes.trunk} xs={12} item>
 		<Grid item>
+		<h1>Johann Joseph Fux's <i>Gradus Ad Parnassum</i></h1>
+		</Grid>
+		</Grid>
+		<Grid className={classes.trunk} xs={12} item>
+		<Grid item>
 		<CPPiano audioctx={audioctx} record={recordNotes}/>
 		</Grid>
 		</Grid>
@@ -100,18 +111,20 @@ function Landing() {
 		</Grid>
 		<Grid className={classes.trunk} xs={12} item>
 		<Grid item>
+		<Button variant='outlined' color='primary' onClick={addBlank}>Blank Line</Button>
+		<Button variant='outlined' color='primary' onClick={backspace}>Backspace</Button>
+		<Button variant='outlined' color='primary' onClick={resetMelody}>Clear</Button>
+		</Grid>
+		</Grid>
+
+		<Grid className={classes.trunk} xs={12} item>
+		<Grid item>
 		<Sheet keySignature={keySig} cpcount={cpcount} melody={melody} counterpoints={counterpoints}/>
 		</Grid>
 		</Grid>
 		<Grid className={classes.trunk} xs={12} item>
 		<Grid item>
 		<MelodyForm changeKey={changeKey} melody={melody} addCounterpoint={addCounterpoint}/>
-		</Grid>
-		</Grid>
-		<Grid className={classes.trunk} xs={12} item>
-		<Grid item>
-		<Button variant='outlined' color='primary' onClick={backspace}>Backspace</Button>
-		<Button variant='outlined' color='primary' onClick={resetMelody}>Clear</Button>
 		</Grid>
 		</Grid>
 		<Grid className={classes.trunk} xs={12} item>

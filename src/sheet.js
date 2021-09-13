@@ -34,14 +34,14 @@ export default function Sheet (props) {
 	}
 
 
-	const drawStave = (context, cf=0) => {
+	const drawStave = (context, divId='default') => {
 		const VF = Vex.Flow;
 		const modifier = VF.Modifier;
 		var text = 'C.F.';
 		var stave = new VF.Stave(100, 40, 700);
 		// Add a clef and time signature.
-		if(cf == 1){
-			text = 'C.P. ' + cf;
+		if(divId != 'default'){
+			text = 'C.P. ' + divId.split('-')[1];
 		}
 		stave.setText(text, modifier.Position.LEFT);
 		stave.addClef("treble").addKeySignature(props.keySignature);
@@ -56,11 +56,10 @@ export default function Sheet (props) {
 		const VF = Vex.Flow;
 
 		var context = createContext(divId);
-		var cf = 0;
-		if(divId != 'melody_div'){
-			cf = 1;
+		var stave = drawStave(context, divId);
+		if(!cantus.length){
+			return;
 		}
-		var stave = drawStave(context, cf);
 		var rawNotes = staveNotes(midiVex(cantus, props.keySignature));
 		var notes = [];
 		for(let i = 0; i < rawNotes.length; i++){
@@ -89,7 +88,7 @@ export default function Sheet (props) {
 		var myDiv = document.getElementById("sheet_div");
 		for(var i = 0; i < countermelodies.length; i++){
 			let new_div = document.createElement('div');
-			new_div.setAttribute('id', 'cp-' + i)
+			new_div.setAttribute('id', 'cp-' + (i+1))
 			myDiv.prepend(new_div)
 			drawVoice(countermelodies[i], new_div.id)
 		}
