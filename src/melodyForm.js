@@ -1,8 +1,9 @@
-import {useState} from 'react';
+import {useState, useRef} from 'react';
 import {Switch, MenuItem, Select, Button, Grid, FormControl, FormControlLabel} from '@material-ui/core'
 import {spacing} from '@material-ui/system'
 import routes from './routes.js';
 import axios from 'axios';
+import CustomAlert from './alert.js';
 
 export default function MelodyForm(props){
 
@@ -19,6 +20,12 @@ export default function MelodyForm(props){
 	const [key, setKey] = useState('C');
 	const [scale, setScale] = useState('major');
 	const [vertical, setVertical] = useState(true);
+	const [message, setMessage] = useState('');
+
+	const clearMessage = () => {
+		setMessage('');
+
+	}
 
 	const handleKeyChange = e => {
 		var kk = e.target.value;
@@ -50,6 +57,11 @@ export default function MelodyForm(props){
 	const submitMelody = e => {
 		e.preventDefault();
 
+		if(props.melody.length < 4){
+			setMessage('Melody too short');
+			return;
+		}
+
 		var data = new FormData();
 
 		data.append('key', key + ' ' + scale)
@@ -71,6 +83,7 @@ export default function MelodyForm(props){
 
 	return (
 		<div m={3}>
+		<CustomAlert message={message} clearMessage={clearMessage}/>
 		<Grid container spacing={1}>
 		<Grid item xs={3}>
 		<Select id='kk' onChange={handleKeyChange} value={key}>

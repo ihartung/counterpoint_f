@@ -40,7 +40,7 @@ export default function Sheet (props) {
 		var text = 'C.F.';
 		var stave = new VF.Stave(100, 40, 700);
 		// Add a clef and time signature.
-		if(divId != 'default'){
+		if(divId.includes('cp')){
 			text = 'C.P. ' + divId.split('-')[1];
 		}
 		stave.setText(text, modifier.Position.LEFT);
