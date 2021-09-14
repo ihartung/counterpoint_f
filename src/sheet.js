@@ -34,7 +34,7 @@ export default function Sheet (props) {
 	}
 
 
-	const drawStave = (context, divId='default') => {
+	const drawStave = (context, divId='default', clef='treble') => {
 		const VF = Vex.Flow;
 		const modifier = VF.Modifier;
 		var text = 'C.F.';
@@ -44,23 +44,24 @@ export default function Sheet (props) {
 			text = 'C.P. ' + divId.split('-')[1];
 		}
 		stave.setText(text, modifier.Position.LEFT);
-		stave.addClef("treble").addKeySignature(props.keySignature);
+		stave.addClef(clef).addKeySignature(props.keySignature);
 		// Connect it to the rendering context and draw!
 		stave.setContext(context).draw();
 		return stave;
 
 	}
 
-	const drawVoice = (cantus, divId) => {
+	const average = (array) => array.reduce((a,b) => a+b, 0)/array.length;
+
+	const drawVoice = (cantus, divId, clef='treble') => {
 
 		const VF = Vex.Flow;
-
 		var context = createContext(divId);
-		var stave = drawStave(context, divId);
+		var stave = drawStave(context, divId, clef);
 		if(!cantus.length){
 			return;
 		}
-		var rawNotes = staveNotes(midiVex(cantus, props.keySignature));
+		var rawNotes = staveNotes(midiVex(cantus, props.keySignature), clef);
 		var notes = [];
 		for(let i = 0; i < rawNotes.length; i++){
 			let tmp;
@@ -85,12 +86,19 @@ export default function Sheet (props) {
 	}
 
 	const addVoices = (countermelodies) => {
-		var myDiv = document.getElementById("sheet_div");
+		let clef, tag, myDiv;
 		for(var i = 0; i < countermelodies.length; i++){
+			clef = 'treble';
+			tag = 'above';
+			if(average(countermelodies[i])<60){
+				clef = 'bass';
+				tag = 'below';
+			}
+			myDiv = document.getElementById(tag);
 			let new_div = document.createElement('div');
 			new_div.setAttribute('id', 'cp-' + (i+1))
 			myDiv.prepend(new_div)
-			drawVoice(countermelodies[i], new_div.id)
+			drawVoice(countermelodies[i], new_div.id, clef)
 		}
 	}
 
@@ -100,7 +108,6 @@ export default function Sheet (props) {
 			drawVoice(props.melody, 'melody_div')
 		} else {
 			drawStave(createContext('melody_div'));
-
 		}
 	}
 
@@ -141,7 +148,9 @@ export default function Sheet (props) {
 
 	return (
 		<div id='sheet_div'>
+		<div id='above'></div>
 		<div id='melody_div'></div>
+		<div id='below'></div>
 		</div>
 	);
 }

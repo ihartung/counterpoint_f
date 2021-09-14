@@ -67,11 +67,11 @@ export const midiVex = (midiNumbers, key) => {
 
 }
 
-export const staveNotes = (engNotes) => {
+export const staveNotes = (engNotes, clef='treble') => {
 	var vexNotes = [];
 
 	for(let i = 0; i < engNotes.length; i++){
-		var tmp = {clef: 'treble', keys: [engNotes[i]], duration: 'q'};
+		var tmp = {clef: clef, keys: [engNotes[i]], duration: 'q'};
 		vexNotes.push(tmp);
 	}
 
