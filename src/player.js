@@ -5,6 +5,7 @@ import {Grid, makeStyles, Button} from '@material-ui/core';
 export default function Player (props) {
 
 	const organ = 193; 
+	const cporgan = 194;
 	var midiSounds;
 	const [playing, setPlaying] = useState(0);
 
@@ -21,10 +22,11 @@ export default function Player (props) {
 					let row = [];
 					row.push([organ, [props.melody[i]], 1/4]);
 					for(let j = 0; j<props.counterpoints.length; j++){
-						row.push([organ, [props.counterpoints[j][i]], 1/4]);
+						row.push([cporgan, [props.counterpoints[j][i]], 1/4]);
 					}	
 					data.push([[],row]);
 				}
+				//pause
 				for(let j = 0; j<4; j++){
 					data.push([[],[]]);
 				}	
@@ -41,7 +43,9 @@ export default function Player (props) {
 
 	return (<div>
 		<Button variant='outlined' color='primary' onClick={playPause}>{playing?'Stop':'Play'}</Button>
+		<div hidden>
 		<MIDISounds ref={(ref) => (midiSounds = ref)} appElementName='root' instruments={[organ]}/>
+		</div>
 		</div>)
 
 }
