@@ -75,6 +75,23 @@ function Landing() {
 		}
 	}
 
+	const clearSelection = () => {
+		if(voice){
+			let i = voice - 1;
+			let cps = counterpoints;
+			cps.splice(i,1);
+			setCounterpoints(cps);
+			if(cps.length==0){
+				setVoice(0);
+			}
+			let tmp = cpcount - 1;
+			setCpcount(tmp);
+		} else {
+			setMelody([]);
+		}
+	}
+
+
 	const selectVoice = (index) => {
 		setVoice(index);
 	}
@@ -111,9 +128,10 @@ function Landing() {
 		</Grid>
 		<Grid className={classes.trunk} xs={12} item>
 		<Grid item>
-		<Button variant='outlined' color='primary' onClick={addBlank}>Blank Line</Button>
+		<Button variant='outlined' color='primary' onClick={addBlank}>Add Blank</Button>
 		<Button variant='outlined' color='primary' onClick={backspace}>Backspace</Button>
-		<Button variant='outlined' color='primary' onClick={resetMelody}>Clear</Button>
+		<Button variant='outlined' color='primary' onClick={clearSelection}>Clear Selection</Button>
+		<Button variant='outlined' color='primary' onClick={resetMelody}>Clear All</Button>
 		</Grid>
 		</Grid>
 
